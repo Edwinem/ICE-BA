@@ -4606,6 +4606,7 @@ void LocalBundleAdjustor::MarkFeatureMeasurements(const LocalFrame &LF, const in
 void LocalBundleAdjustor::MarkFeatureMeasurementsUpdateDepth(const FRM::Frame &F,
                                                              std::vector<ubyte> &ucsKF,
                                                              std::vector<ubyte> &uds) {
+#ifdef CFG_GROUND_TRUTH
   const int NZ = static_cast<int>(F.m_Zs.size());
   for (int iZ = 0; iZ < NZ; ++iZ) {
     const FRM::Measurement &Z = F.m_Zs[iZ];
@@ -4616,6 +4617,7 @@ void LocalBundleAdjustor::MarkFeatureMeasurementsUpdateDepth(const FRM::Frame &F
       uds[F.m_zs[iz].m_ix] |= LBA_FLAG_TRACK_UPDATE_DEPTH;
     }
   }
+#endif
 }
 
 #ifdef CFG_DEBUG

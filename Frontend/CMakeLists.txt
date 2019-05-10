@@ -71,6 +71,8 @@ target_include_directories(OF PUBLIC
     ${YAMLCPP_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/cameras
+        /home/nikolausmitchell/programming/ICE-BA/brisk/include
+        /home/nikolausmitchell/programming/ICE-BA/brisk/agast/include
 )
 target_link_libraries(OF
     ${GFLAGS_LIBRARIES}

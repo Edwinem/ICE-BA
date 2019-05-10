@@ -214,6 +214,7 @@ void Solver::PushCurrentFrame(const CurrentFrame &CF, const KeyFrame *KF, const 
       m_internal->m_LBA.PushLocalFrame(m_internal->m_ILF);
       m_internal->m_LBA.PushKeyFrame(m_internal->m_IKF, serial);
     } else {
+      ///here KF first
       m_internal->PushKeyFrame(*KF);
       m_internal->PushCurrentFrame(CF);
       m_internal->m_LM.IBA_PushKeyFrame(m_internal->m_IKF);

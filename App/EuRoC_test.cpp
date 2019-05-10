@@ -31,7 +31,7 @@
 #include <string>
 #include <fstream>
 #include <vector>
-
+#include "/home/nikolausmitchell/nodein/nl/thirdparty/json/single_include/nlohmann/json.hpp"
 namespace fs = boost::filesystem;
 using std::string;
 using std::vector;
@@ -343,6 +343,9 @@ bool create_iba_frame(const vector<cv::KeyPoint>& kps_l,
 
 
 int main(int argc, char** argv) {
+  using json = nlohmann::json;
+  json j;
+
   google::InitGoogleLogging(argv[0]);
   google::ParseCommandLineFlags(&argc, &argv, true);
   google::InstallFailureSignalHandler();
@@ -488,6 +491,7 @@ int main(int argc, char** argv) {
   cv::Mat pre_image_features;
   for (int it_img = FLAGS_start_idx; it_img < FLAGS_end_idx; ++it_img) {
     VLOG(0) << " start detection at ts = " << fs::path(img_file_paths[it_img]).stem().string();
+      string ts_ns_string = fs::path(img_file_paths[it_img]).stem().string();
     auto read_img_start = std::chrono::high_resolution_clock::now();
     cv::Mat img_in_raw;
     img_in_raw = cv::imread(img_file_paths[it_img], CV_LOAD_IMAGE_GRAYSCALE);
@@ -625,29 +629,58 @@ int main(int argc, char** argv) {
               << " ms";
     }
 
-    std::sort(key_pnts.begin(), key_pnts.end(), cmp_by_class_id);
-    std::sort(key_pnts_slave.begin(), key_pnts_slave.end(), cmp_by_class_id);
-    // push to IBA
-    IBA::CurrentFrame CF;
-    IBA::KeyFrame KF;
-    create_iba_frame(key_pnts, key_pnts_slave, imu_meas, time_stamp, &CF, &KF);
-    solver.PushCurrentFrame(CF, KF.iFrm == -1 ? nullptr : &KF);
-    if (FLAGS_save_feature) {
-      IBA::SaveCurrentFrame(iba_dat_file_paths[it_img], CF, KF);
-    }
-    pre_image_key_points = key_pnts;
-    pre_image_features = orb_feat.clone();
-    // show pose
-    pose_viewer.displayTo("trajectory");
-    cv::waitKey(1);
-    prev_time_stamp = time_stamp;
-  }
-  std::string temp_file = "/tmp/" + std::to_string(offset_ts_ns) + ".txt";
-  solver.SaveCamerasGBA(temp_file, false /* append */, true /* pose only */);
-  solver.Stop();
-  solver.Destroy();
+      std::sort(key_pnts.begin(), key_pnts.end(), cmp_by_class_id);
+      std::sort(key_pnts_slave.begin(), key_pnts_slave.end(), cmp_by_class_id);
+      // push to IBA
+      IBA::CurrentFrame CF;
+      IBA::KeyFrame KF;
+      create_iba_frame(key_pnts, key_pnts_slave, imu_meas, time_stamp, &CF, &KF);
+      solver.PushCurrentFrame(CF, KF.iFrm == -1 ? nullptr : &KF);
+      if (FLAGS_save_feature) {
+          IBA::SaveCurrentFrame(iba_dat_file_paths[it_img], CF, KF);
+          json cf;
+          cf["timestamp_s"]=CF.t;
+          cf["timestamp_ns"]=std::stol(ts_ns_string);
+          cf["leftfile"]=CF.fileName;
+          cf["id"]=CF.iFrm;
+          for ( auto iter:CF.us){
+              cf["imu"].push_back(iter.t);
+              cf["imu"].push_back(iter.a[0]);
+              cf["imu"].push_back(iter.a[1]);
+              cf["imu"].push_back(iter.a[2]);
+              cf["imu"].push_back(iter.w[0]);
+              cf["imu"].push_back(iter.w[1]);
+              cf["imu"].push_back(iter.w[2]);
+          }
+          for ( auto iter:CF.zs){
 
-  // for comparsion with asl groundtruth
-  convert_to_asl_timestamp(temp_file, FLAGS_gba_camera_save_path, offset_ts_ns);
-  return 0;
+              cf["feature"].push_back(double(iter.iFrm));
+              cf["feature"].push_back(iter.right);
+              cf["feature"].push_back(iter.x.x[0]);
+              cf["feature"].push_back(iter.x.x[1]);
+              cf["feature"].push_back(iter.x.S[0][0]);
+              cf["feature"].push_back(iter.x.S[0][1]);
+              cf["feature"].push_back(iter.x.S[1][0]);
+              cf["feature"].push_back(iter.x.S[1][1]);
+
+          }
+          j[std::to_string(CF.iFrm)]=cf;
+      }
+      pre_image_key_points = key_pnts;
+      pre_image_features = orb_feat.clone();
+      // show pose
+      pose_viewer.displayTo("trajectory");
+      cv::waitKey(1);
+      prev_time_stamp = time_stamp;
+  }
+    std::ofstream o("pretty.json");
+    o << std::setw(4) << j << std::endl;
+    std::string temp_file = "/tmp/" + std::to_string(offset_ts_ns) + ".txt";
+    solver.SaveCamerasGBA(temp_file, false /* append */, true /* pose only */);
+    solver.Stop();
+    solver.Destroy();
+
+    // for comparsion with asl groundtruth
+    convert_to_asl_timestamp(temp_file, FLAGS_gba_camera_save_path, offset_ts_ns);
+    return 0;
 }

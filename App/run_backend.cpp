@@ -621,6 +621,7 @@ int main(int argc, char** argv) {
     if (scc) {
       return 0;
     } else {
+        std::cout << "failed" << std::endl;
       return 1;
     }
   } else {
