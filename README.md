@@ -1,8 +1,8 @@
 # ICE-BA
 
-##Niko Modifications
+## Niko Modifications
 
-###Build
+### Build
 
 Install gflags
 
@@ -18,7 +18,7 @@ If the build fails with OpenCV errors then it most likely does not like your sys
 *cmake-gui ..* in your build
 folder and set the opencv directory path to your own version. This path should be the ../share/OpenCV folder.
 
-###Running
+### Running
 
 See the script files in ./scripts. Change the directory and dataset accordingly.
 
