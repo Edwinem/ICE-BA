@@ -1,0 +1,6 @@
+/build
+/cmake-build
+/cmake-build-debug
+/dependencies/yaml-cpp/build
+/.idea
+/bin
