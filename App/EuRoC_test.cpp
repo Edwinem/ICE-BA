@@ -31,7 +31,7 @@
 #include <string>
 #include <fstream>
 #include <vector>
-#include "/home/nikolausmitchell/nodein/nl/thirdparty/json/single_include/nlohmann/json.hpp"
+#include "../dependencies/json/single_include/nlohmann/json.hpp"
 namespace fs = boost::filesystem;
 using std::string;
 using std::vector;
@@ -673,7 +673,7 @@ int main(int argc, char** argv) {
       cv::waitKey(1);
       prev_time_stamp = time_stamp;
   }
-    std::ofstream o("pretty.json");
+    std::ofstream o("features.json");
     o << std::setw(4) << j << std::endl;
     std::string temp_file = "/tmp/" + std::to_string(offset_ts_ns) + ".txt";
     solver.SaveCamerasGBA(temp_file, false /* append */, true /* pose only */);

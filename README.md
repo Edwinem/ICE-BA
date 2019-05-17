@@ -1,4 +1,29 @@
 # ICE-BA
+
+##Niko Modifications
+
+###Build
+
+Install gflags
+
+```
+sudo apt-get install libgflags-dev
+```
+
+Hopefully just run *./build.sh* and it should work.
+
+The extra dependencies can be found in the dependencies folder. You most likely don't have to worry about them.
+
+If the build fails with OpenCV errors then it most likely does not like your system OpenCV(It needs OpenCV 3). Run
+*cmake-gui ..* in your build
+folder and set the opencv directory path to your own version. This path should be the ../share/OpenCV folder.
+
+###Running
+
+See the script files in ./scripts. Change the directory and dataset accordingly.
+
+Everytime you run the Euroc_test it will save the detected features in a features.json.
+
 ## ICE-BA: Incremental, Consistent and Efficient Bundle Adjustment for Visual-Inertial SLAM  
 We present ICE-BA, an incremental, consistent and efficient bundle adjustment for visual-inertial SLAM, which takes feature tracks, IMU measurements and optionally the loop constraints as input, performs in parallel both local BA over the sliding window and global BA over all keyframes, and outputs camera pose and updated map points for each frame in real-time. The main contributions include:  
 - a new BA solver that leverages the incremental nature of SLAM measurements to achieve more than 10x efficiency compared to the state-of-the-arts.  

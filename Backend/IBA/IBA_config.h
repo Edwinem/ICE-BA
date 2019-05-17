@@ -35,7 +35,7 @@ typedef float PCG_TYPE;
 #define CFG_SERIAL
 #define CFG_VERBOSE
 #define CFG_HISTORY
-//#define CFG_GROUND_TRUTH
+#define CFG_GROUND_TRUTH
 #ifdef WIN32
 //#define CFG_DEBUG
 #else

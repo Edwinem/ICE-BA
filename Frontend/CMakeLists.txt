@@ -68,16 +68,18 @@ add_library(OF SHARED
 target_include_directories(OF PUBLIC
     ${GFLAGS_INCLUDE_DIR}
     ${OpenCV_INCLUDE_DIR}
-    ${YAMLCPP_INCLUDE_DIR}
+    #${YAMLCPP_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/cameras
-        /home/nikolausmitchell/programming/ICE-BA/brisk/include
-        /home/nikolausmitchell/programming/ICE-BA/brisk/agast/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/brisk/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/brisk/agast/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/yaml-cpp/include
 )
 target_link_libraries(OF
     ${GFLAGS_LIBRARIES}
     ${OpenCV_LIBS}
-    ${YAMLCPP_LIBRARIES}
+    #${YAMLCPP_LIBRARIES}
+        ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/yaml-cpp/build/libyaml-cpp.a #THIS IS CODED TO LOCAL YAML
     IBA
     glog
 )
